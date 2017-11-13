@@ -1,0 +1,30 @@
+{
+  "name": "lottery-data-analysis",
+  "version": "0.0.1",
+  "description": "Tool to generate Mega-Sena lottery data analysis",
+  "main": "index.js",
+  "scripts": {
+    "start": "node analysis.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angelopolotto/lottery-data-analysis.git"
+  },
+  "keywords": [
+    "lottery",
+    "analysis"
+  ],
+  "author": "Angelo Polotto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/angelopolotto/lottery-data-analysis/issues"
+  },
+  "homepage": "https://github.com/angelopolotto/lottery-data-analysis#readme",
+  "dependencies": {
+    "d3": "^4.11.0",
+    "immutable": "^3.8.2",
+    "lodash": "^4.17.4",
+    "loterias-caixa-json": "^1.0.2"
+  }
+}
