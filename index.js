@@ -30,7 +30,7 @@ function downloadData(){
   });
 }
 
-function totalDeDezenasParesImpares(concursos){
+function totalDeDezenasParesImpares(concursos) {
   let totalParImpar = {
     totalDeDezenasPares : 0,
     totalDeDezenasImpares : 0,
@@ -85,75 +85,32 @@ function totalDeDezenasParesImpares(concursos){
   return totalParImpar
 }
 
-function totalDeSequenciasSorteadas(concursos){
-  /*
-public IEnumerable<TotalSequenciasSorteadas> TotalSequenciaSorteadas()
-  {
-      var sequencias = new List<TotalSequenciasSorteadas>();
-      var sequencia = new TotalSequenciasSorteadas();
-      foreach (var concurso in _concursos)
-      {
-          var gruposSequencias = Sequencia(concurso.Dezenas);
-          if (gruposSequencias.Count == 0)
-              continue;
-          else
-          {
-              sequencia.TotalSequencias++;
-          }
-      }
-      sequencia.TotalConcursos = _concursos.Count;
-      sequencias.Add(sequencia);
-      return sequencias;
-  }
-  */
+function totalDeSequenciasSorteadas(concursos) {
   let  sequenciasSorteadas = {
-    totalSequencias : 0,
-    totalConcursos : 0
+    totalDeSequencias : 0,
+    totalDeConcursos : 0
   }
   
-  for (i=0; i < concursos.length; i++) {
+  for (let i=0; i < concursos.length; i++) {
     let concurso = concursos[i];
     let gruposSequencias = identificaSequencia(concurso)
     if (gruposSequencias.length == 0) {
         continue
     }
     else {
-        sequenciasSorteadas.totalSequencias++
+        sequenciasSorteadas.totalDeSequencias++
     }
   }
-  sequenciasSorteadas.totalConcursos = concursos.length
+  sequenciasSorteadas.totalDeConcursos = concursos.length
   return sequenciasSorteadas
 }
 
-function identificaSequencia(concurso){
-  /*
-private List<List<int>> Sequencia(IEnumerable<int> lista)
-  {
-      var sequencia = new List<List<int>>();
-      var listaOrd = lista.OrderBy(i => i);
-      var aux = new List<int>();
-      for (int i = 0; i < listaOrd.Count() - 1; i++)
-      {
-          if (listaOrd.ElementAt(i) + 1 == listaOrd.ElementAt(i + 1))
-          {
-              aux.Add(listaOrd.ElementAt(i));
-              aux.Add(listaOrd.ElementAt(i + 1));
-          }
-          else
-          {
-              if (aux.Count != 0)
-                  sequencia.Add(aux);
-              aux = new List<int>();
-          }
-      }
-      return sequencia;
-  }
-  */ 
+function identificaSequencia(concurso) {
   let sequencias = []
   let dezenas = [concurso.Dezena1, concurso.Dezena2, concurso.Dezena3, concurso.Dezena4, concurso.Dezena5, concurso.Dezena6]
   let listaOrd = dezenas.sort((a,b)=>{return a-b})
   let aux = []
-  for (i = 0; i < listaOrd.length - 1; i++) {
+  for (let i = 0; i < listaOrd.length - 1; i++) {
       if (listaOrd[i] + 1 == listaOrd[i + 1]) {
           aux.push(listaOrd[i])
           aux.push(listaOrd[i + 1])
@@ -168,16 +125,54 @@ private List<List<int>> Sequencia(IEnumerable<int> lista)
   return sequencias
 }
 
-function sequenciasMaisSorteadas(){
+function sequenciasMaisSorteadas(concursos) {
+  let sequencias = []
+  for (let i=0; i < concursos.length; i++) {
+    let concurso = concursos[i]  
+    let gruposSequencias = identificaSequencia(concurso);
+      if (gruposSequencias.length == 0) {
+          continue
+      }
+      for (let j=0; j < gruposSequencias.length; j++) {
+        let grupoSequencia =  gruposSequencias[j]
+        
+        let sequencia = sequencias.find((sequenciaObj) => {
+          if (sequenciaObj.sequencia[0] == grupoSequencia[0] ){
+            return true
+          }
+          return false
+        })
+        if (sequencia == null || sequencia.length == 0) {
+            let con = []
+            con.push(concurso.Concurso)
+            sequencias.push({
+                    quantidade : 1,
+                    sequencia : grupoSequencia,
+                    concursos : con
+                })
+        }
+        else {
+            sequencia.quantidade++
+            sequencia.concursos.push(concurso.Concurso);
+        }
+      }
+  }
 
+  return sequencias.sort((a,b)=>{return b.quantidade-a.quantidade})
 }
 
-function totalConcursos(){
-
+function totalConcursos(concursos) {
+  var total = [];
+  total.push({
+        numeroTotalDeConcursos = concursos.length,
+        totalDeConcursosAcumulados = concursos.filter((obj)=>{return obj.Acumulado==true}).length,
+        totalDePessoasPremiadasComSena = concursos.filter((obj)=>{return obj.Acumulado==false}).length
+      })
+  return total
 }
 
 function totalGanhadores(){
-
+  
 }
 
 function concursoComMaiorRateio(){
@@ -205,9 +200,9 @@ function dezenasMaisSorteadas(){
 }
 
 (async () =>{
-  let concursos = JSON.parse(await readData());
-  console.log(totalDeDezenasParesImpares(concursos));
-  console.log(totalDeSequenciasSorteadas(concursos));
-  //jsonNumbers.forEach()
+  let concursos = JSON.parse(await readData())
+  console.log(totalDeDezenasParesImpares(concursos))
+  console.log(totalDeSequenciasSorteadas(concursos))
+  console.log(sequenciasMaisSorteadas(concursos))
   console.log(concursos)
 })();
